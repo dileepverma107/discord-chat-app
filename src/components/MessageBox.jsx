@@ -27,7 +27,7 @@ const App = () => {
   const [channelId, setChannelId] = useState(null);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://https://my-discord-backend-jyv1r615v-dileeps-projects-103f924b.vercel.app/");
+    const ws = new WebSocket("wss://my-discord-backend-websocket.onrender.com/");
 
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
@@ -44,7 +44,7 @@ const App = () => {
 
   const createChannel = async () => {
     try {
-      const response = await fetch("https://my-discord-backend-jyv1r615v-dileeps-projects-103f924b.vercel.app/create-channel", {
+      const response = await fetch("https://my-discord-backend.onrender.com/create-channel", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +73,7 @@ const App = () => {
         return;
       }
 
-      const response = await fetch("https://my-discord-backend-jyv1r615v-dileeps-projects-103f924b.vercel.app/send-message", {
+      const response = await fetch("https://my-discord-backend.onrender.com/send-message", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
