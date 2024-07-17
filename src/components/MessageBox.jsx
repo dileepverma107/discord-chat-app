@@ -10,7 +10,9 @@ import {
   MDBBtn,
   MDBCardFooter,
   MDBInputGroup,
+  MDBSpinner,
 } from "mdb-react-ui-kit";
+import moment from "moment";
 
 const transformUsername = (username) => {
   const parts = username.split(/[._]/);
@@ -25,6 +27,7 @@ const App = () => {
   const [inputMessage, setInputMessage] = useState("");
   const [sessionId, setSessionId] = useState("");
   const [channelId, setChannelId] = useState(null);
+  const [loading, setLoading] = useState(false); // New loading state
 
   useEffect(() => {
     const ws = new WebSocket("wss://my-discord-backend-websocket.onrender.com/");
@@ -43,6 +46,7 @@ const App = () => {
   }, [channelId]);
 
   const createChannel = async () => {
+    setLoading(true); // Set loading to true when request starts
     try {
       const response = await fetch("https://my-discord-backend.onrender.com/create-channel", {
         method: "POST",
@@ -61,6 +65,8 @@ const App = () => {
       }
     } catch (error) {
       console.error("Error creating channel:", error);
+    } finally {
+      setLoading(false); // Set loading to false when request ends
     }
   };
 
@@ -237,11 +243,7 @@ const App = () => {
                             color: "gray",
                           }}
                         >
-                          {new Date(msg.timestamp).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
-                          })}
+                          {moment(msg.timestamp).format("LT")}
                         </span>
                       </p>
                     </div>
@@ -272,8 +274,18 @@ const App = () => {
                     color="warning"
                     style={{ paddingTop: ".55rem" }}
                     onClick={createChannel}
+                    disabled={loading} // Disable button when loading
                   >
-                    Start Chat <MDBIcon fas icon="paper-plane" />
+                    {loading ? (
+                      <>
+                        <MDBSpinner size="sm" role="status" tag="span" />
+                        <span className="visually-hidden">Loading...</span>
+                      </>
+                    ) : (
+                      <>
+                        Start Chat <MDBIcon fas icon="paper-plane" />
+                      </>
+                    )}
                   </MDBBtn>
                 </MDBInputGroup>
               ) : (
